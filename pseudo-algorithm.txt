@@ -24,20 +24,25 @@ For each character c in file / while character c not null {
 		} else {
 			convert 'current word' list to a string s, all lowercase
 			if s is in the concordance index {
-				add line number, page number to condordance[s]
-				add s to 'words in sentence' list
+				add line number, page number to concordance[s]
+				add ^ to 'words in sentence' list
 			}
 		}
 	} else if c is '\n' {
 		increment line number
+		+for w in 'words in sentence' {
+		+	w.setContext('current sentence' as string)
+		+clear 'current sentence' list
+		+clear 'words in sentence' list
+		+continue
 	}
-	if c is sentence-terminating character (.,!,?,(,),[,],{,},;,:,",') {
-		for w in 'words in sentence' {
-			w.setContext('current sentence' as string)
-		}
-		clear 'current sentence' list
-		clear 'words in sentence' list
-	}
+	-if c is sentence-terminating character (.,!,?,(,),[,],{,},;,:,",') {
+	-	for w in 'words in sentence' {
+	-		w.setContext('current sentence' as string)
+	-	}
+	-	clear 'current sentence' list
+	-	clear 'words in sentence' list
+	-}
 	append c to 'current sentence' list
 }
 
