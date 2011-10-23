@@ -25,7 +25,7 @@ public class Run {
 			iterTime = System.nanoTime();
 			for(String key : concordance.keySet()) {
 				LittleLinkedList list = concordance.get(key);
-				System.out.println(key.toUpperCase()+" - "+list.size());
+				//System.out.println(key.toUpperCase());
 				//System.out.println("# entries:\t"+list.size());
 				WordEntry entry = (WordEntry) list.getHead();
 				while(entry != null) {
@@ -35,13 +35,13 @@ public class Run {
 					System.out.print(entry.getContext());
 					entry = (WordEntry) entry.next();
 				}
-				//System.out.println();
+				System.out.println();
 			}
 			endIter = System.nanoTime()-iterTime;
 			
 			endFreeMem = Runtime.getRuntime().freeMemory();
 			System.out.println("INST: "+endInst+", SCAN: "+endScan+", ITER: "+endIter);
-			System.out.println("SMEM: "+startFreeMem+", EMEM: "+endFreeMem);
+			System.out.println("NENT: "+concordance.get("jesus").size()+", SMEM: "+startFreeMem+", EMEM: "+endFreeMem);
 		} catch (IOException e) {
 			System.out.println("File loading error:");
 			e.printStackTrace();
