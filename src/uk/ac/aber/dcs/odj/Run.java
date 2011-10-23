@@ -5,7 +5,7 @@ import java.util.Enumeration;
 
 public class Run {
 	static final String[] index = {
-		"and"
+		"jesus"
 	};
 	
 	public static void main(String[] args) {
@@ -24,17 +24,18 @@ public class Run {
 			
 			iterTime = System.nanoTime();
 			for(String key : concordance.keySet()) {
-				System.out.println(key.toUpperCase());
 				LittleLinkedList list = concordance.get(key);
-				System.out.println("# entries:\t"+list.size());
+				System.out.println(key.toUpperCase()+" - "+list.size());
+				//System.out.println("# entries:\t"+list.size());
 				WordEntry entry = (WordEntry) list.getHead();
 				while(entry != null) {
-					System.out.println("----");
-					System.out.println("\tLine:\t\t"+entry.getLine());
-					System.out.println("\tContext:\t..."+entry.getContext()+"...");
+					//System.out.println("----");
+					//System.out.println("\tLine:\t\t"+entry.getLine());
+					//System.out.println("\tContext:\t..."+entry.getContext()+"...");
+					System.out.print(entry.getContext());
 					entry = (WordEntry) entry.next();
 				}
-				System.out.println();
+				//System.out.println();
 			}
 			endIter = System.nanoTime()-iterTime;
 			
