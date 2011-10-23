@@ -6,6 +6,7 @@ package uk.ac.aber.dcs.odj;
  * {@link CustomNode} interface.
  * Behaves similarly to Java's default {@link LinkedList} class, but with less
  * methods.
+ * Uses Generics, and elements in list must extend {@link CustomNode} class.
  * For my CS assignment, I only need to be able to add to the list and iterate
  * through all the elements in a serial manner - I don't need to be able to
  * remove or get specific elements in the middle of the list, so I've left
@@ -14,24 +15,25 @@ package uk.ac.aber.dcs.odj;
  * @author Owain Jones <odj@aber.ac.uk>
  *
  */
-public class LittleLinkedList {
-	private CustomNode head;
-	private CustomNode tail;
+public class LittleLinkedList<T extends CustomNode> {
+	private T head;
+	private T tail;
 	private int size;
 	
 	/**
 	 * Creates a new Little Linked List with a size of 0 and no head node.
 	 * (getHead and getTail methods will return null)
 	 */
-	LittleLinkedList() {
+	public LittleLinkedList() {
 		this(null);
+		this.size = 0;
 	}
 
 	/**
 	 * Creates a new Little Linked List and adds a head node
 	 * @param first The node to add which will become the head of the list.
 	 */
-	LittleLinkedList(CustomNode first) {
+	public LittleLinkedList(T first) {
 		this.add(first);
 	}
 	
@@ -40,7 +42,7 @@ public class LittleLinkedList {
 	 * @param node The {@link CustomNode} object to append to the end of list
 	 * @return true if node was added, false if the node couldn't be added
 	 */
-	public boolean add(CustomNode node) {
+	public boolean add(T node) {
 		if(this.size == 0) {
 			this.head = node;
 			this.tail = node;
@@ -64,11 +66,15 @@ public class LittleLinkedList {
 		this.size = 0;
 	}
 
+	public int size() {
+		return this.size;
+	}
+	
 	/**
 	 * Gets the head of the list.
 	 * @return {@link CustomNode} or {@code null} if there's no head node yet.
 	 */
-	public CustomNode getHead() {
+	public T getHead() {
 		return this.head;
 	}
 	
