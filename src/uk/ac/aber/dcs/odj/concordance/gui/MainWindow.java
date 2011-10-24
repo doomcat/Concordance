@@ -4,11 +4,16 @@ import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
+import javax.swing.JTable;
+import javax.swing.ListModel;
 import javax.swing.UIManager;
 
 public class MainWindow {
@@ -53,9 +58,14 @@ public class MainWindow {
 		JSeparator separator = new JSeparator();
 		c.gridx = 0; c.gridy = 2; c.gridwidth = 3; c.weightx = 1;
 		content.add(separator, c);
+
+		DefaultListModel indexes = new DefaultListModel();
+		JList indexList = new JList(indexes);
+		indexes.addElement("Hello");
+		indexes.addElement("World");
 		
-		JLabel pane1 = new JLabel("Hello");
-		JLabel pane2 = new JLabel("World");
+		JScrollPane pane1 = new JScrollPane(indexList);
+		JScrollPane pane2 = new JScrollPane();
 		
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pane1, pane2);
