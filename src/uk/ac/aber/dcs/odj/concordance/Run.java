@@ -32,7 +32,7 @@ public class Run {
 					//System.out.println("----");
 					//System.out.println("\tLine:\t\t"+entry.getLine());
 					//System.out.println("\tContext:\t..."+entry.getContext()+"...");
-					System.out.print(entry.getContext());
+					System.out.println(entry.getLine()+":\t"+entry.getContext());
 					entry = (WordEntry) entry.next();
 				}
 				System.out.println();

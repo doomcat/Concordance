@@ -23,9 +23,13 @@ For each character c in file / while character c not null {
 			ignore
 		} else {
 			convert 'current word' list to a string s, all lowercase
-			if s is in the concordance index {
-				add line number, page number to concordance[s]
-				add ^ to 'words in sentence' list
+			create new temporary string t
+			for c in s {
+				append c to t
+				if(t is in concordance index) {
+					add line number, page number to concordance[s]
+					add ^ to 'words in sentence' list
+				}
 			}
 		}
 	} else if c is '\n' {

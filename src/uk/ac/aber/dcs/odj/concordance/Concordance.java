@@ -15,6 +15,10 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 	private String[] index;
 	private BufferedReader buffer;
 	
+	public Concordance() {
+		super();
+	}
+	
 	public Concordance(String file, String[] index) throws IOException {
 		super();
 		this.index = index;
@@ -39,27 +43,41 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 		}
 	}
 
+	public static boolean isAlphaNumeric(char c) {
+		return ((c >= 'a' && c <= 'z')
+			|| (c >= 'A' && c <= 'Z')
+			|| (c >= '0' && c <= '9'));
+	}
+	
+	public static boolean isWord(String s) {
+		if(s.isEmpty()) return false;
+		for(int i=0; i<s.length(); i++) {
+			if(!isAlphaNumeric(s.charAt(i))) return false;
+		}
+		return true;
+	}
+	
 	public void scan() throws IOException {
 		int b, line = 1;
 		char c;
 		StringBuilder currentWord = new StringBuilder();
 		StringBuilder currentSentence = new StringBuilder();
+		String s;
 		LinkedList<WordEntry> indexedWords = new LinkedList<WordEntry>();
+		boolean append;
 
 		while((b = this.buffer.read()) != -1) {
+			append = true;
 			c = (char) b;
-			currentSentence.append(c);
-			if((c >= 'a' && c <= 'z')
-				|| (c >= 'A' & c <= 'Z')
-				|| (c >= '0' & c <= '9')) {
+			if(isAlphaNumeric(c)) {
 				currentWord.append(c);
 			} else if(c == '-' || c == '\'') {
 				if(currentWord.length() != 0) {
 					currentWord.append(c);
 				}
 			} else if(c == ' ' || c == '\t') {
-				if(currentWord.length() != 0) {
-					String s = currentWord.toString().toLowerCase();
+				for(int i=0; i<=currentWord.length(); i++) {
+					s = currentWord.substring(i).toLowerCase();
 					if(this.containsKey(s)) {
 						WordEntry entry = new WordEntry(line);
 						indexedWords.add(entry);
@@ -67,23 +85,27 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 					}
 				}
 				currentWord = new StringBuilder();
-			} else if(c == '\n') {
-				line++;
-				for(WordEntry w : indexedWords) {
-					w.setContext(currentSentence.toString());
+			/*} else if(c == '\n') {
+				{
+					for(WordEntry w : indexedWords) {
+						w.setContext(currentSentence.toString());
+					}
+					currentSentence = new StringBuilder();
+					indexedWords.clear();
+					line++;
 				}
-				currentSentence = new StringBuilder();
-				indexedWords.clear();
-				continue;
-			}
-			/*if(c == '.' || c == '!' || c == '?' || c == ':' || c == '{'
+			}*/
+			} else if(c == '\n') line++; 
+			if(c == '.' || c == '!' || c == '?' || c == ':' || c == '{'
 				|| c == '}' || c == '(' || c == ')' || c == '[' || c == ']') {
 				for(WordEntry w : indexedWords) {
 					w.setContext(currentSentence.toString());
 				}
 				currentSentence = new StringBuilder();
+				append = false;
 				indexedWords.clear();
-			}*/
+			}
+			if(append) currentSentence.append(c);
 		}
 	}
 }
