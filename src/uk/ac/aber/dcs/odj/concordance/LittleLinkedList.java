@@ -25,7 +25,6 @@ public class LittleLinkedList<T extends CustomNode> {
 	 * (getHead and getTail methods will return null)
 	 */
 	public LittleLinkedList() {
-		this(null);
 		this.size = 0;
 	}
 
@@ -39,6 +38,8 @@ public class LittleLinkedList<T extends CustomNode> {
 	
 	/**
 	 * Appends a node to the end of the list, increasing the list's size by 1.
+	 * If node is identical to another element in the list, don't add to the list -
+	 * return false to indicate we haven't.
 	 * @param node The {@link CustomNode} object to append to the end of list
 	 * @return true if node was added, false if the node couldn't be added
 	 */
@@ -47,9 +48,11 @@ public class LittleLinkedList<T extends CustomNode> {
 			this.head = node;
 			this.tail = node;
 		} else if(this.size == 1) {
+			if(node.identical(this.tail)) return false;
 			this.head.next(node);
 			this.tail = node;
 		} else {
+			if(node.identical(this.tail)) return false;
 			this.tail.next(node);
 			this.tail = node;
 		}

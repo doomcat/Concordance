@@ -25,7 +25,7 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 		this.generateIndex();
 		this.setFile(file);
 	}
-	
+
 	public void setFile(String file) throws IOException {
 		InputStream in = new FileInputStream(new File(file));
 		Reader reader = new InputStreamReader(in);
@@ -56,7 +56,7 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 		}
 		return true;
 	}
-	
+
 	public void scan() throws IOException {
 		int b, line = 1;
 		char c;
@@ -76,13 +76,19 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 					currentWord.append(c);
 				}
 			} else if(c == ' ' || c == '\t') {
-				for(int i=0; i<=currentWord.length(); i++) {
+				/*for(int i=0; i<=currentWord.length(); i++) {
 					s = currentWord.substring(i).toLowerCase();
 					if(this.containsKey(s)) {
 						WordEntry entry = new WordEntry(line);
 						indexedWords.add(entry);
 						this.get(s).add(entry);
 					}
+				}*/
+				s = currentWord.toString().toLowerCase();
+				if(this.containsKey(s)) {
+					WordEntry entry = new WordEntry(line);
+					indexedWords.add(entry);
+					this.get(s).add(entry);
 				}
 				currentWord = new StringBuilder();
 			/*} else if(c == '\n') {

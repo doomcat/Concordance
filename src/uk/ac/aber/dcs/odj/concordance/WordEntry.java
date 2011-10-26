@@ -55,4 +55,19 @@ public class WordEntry extends CustomNode {
 		this.context = context;
 	}
 	
+	/**
+	 * Does a deep comparison to check whether two WordEntries are looking at
+	 * the same line and sentence chunk
+	 * @param other The other WordEntry to compare to
+	 * @return true if both WordEntries are identical, false if not
+	 */
+	@Override
+	public boolean identical(CustomNode other) {
+		WordEntry tother = (WordEntry) other;
+		if(this.line == tother.line && this.context == tother.context) {
+			return true;
+		}
+		return false;
+	}
+	
 }

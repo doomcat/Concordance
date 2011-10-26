@@ -30,4 +30,16 @@ public abstract class CustomNode {
 	public void next(CustomNode node) {
 		this.next = node;
 	}
+	
+	/**
+	 * Do a deep equality comparison to check whether two objects are the same.
+	 * Used in {@link LittleLinkedList} to stop us adding the same thing twice.
+	 * Children of this class have to implement this method to actually do any
+	 * checking.
+	 * @param node The CustomNode offspring to compare against
+	 * @return false by default
+	 */
+	public boolean identical(CustomNode node) {
+		return false;
+	}
 }

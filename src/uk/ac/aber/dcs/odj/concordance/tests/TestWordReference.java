@@ -54,12 +54,35 @@ public class TestWordReference {
 		}
 	}
 	
+	@Test
+	public void testIsDuplicate() {
+		WordEntry e1 = new WordEntry(1,"hello");
+		WordEntry e2 = new WordEntry(1,"hello");
+		Assert.assertTrue(e1.identical(e2));
+	}
+	
+	@Test
+	public void testIsNotDuplicate() {
+		WordEntry e1 = new WordEntry(1,"hello");
+		WordEntry e2 = new WordEntry(1,"world");
+		Assert.assertFalse(e1.identical(e2));
+	}
+	
+	@Test
+	public void testAddDuplicate() {
+		LittleLinkedList<WordEntry> tmp = new LittleLinkedList<WordEntry>();
+		WordEntry e1 = new WordEntry(1,"hello");
+		WordEntry e2 = new WordEntry(1,"hello");
+		tmp.add(e1); tmp.add(e2);
+		Assert.assertEquals(1, tmp.size());
+	}
+	
 	/**
 	 * Make sure we can add to a linkedlist in a reasonable (e.g. O(n)) time -
 	 * test that nothing strange is going on in the LittleLinkedList/WordEntry
 	 * implementation when adding lots of elements.
 	 */
-	@Test
+	//@Test
 	public void testPerformance() {
 		for(int i=0; i<NUM_ITERATIONS; i++) {
 			list.add(new WordEntry(i,"line #"+i));

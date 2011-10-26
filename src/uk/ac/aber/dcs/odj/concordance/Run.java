@@ -12,6 +12,7 @@ public class Run {
 		final long instTime, scanTime, iterTime;
 		final long endInst, endScan, endIter;
 		final long startFreeMem = Runtime.getRuntime().freeMemory(), endFreeMem;
+		int nActual = 0;
 		try {
 			instTime = System.nanoTime();
 			Concordance concordance = new Concordance("./kingjames_bible.txt",
@@ -33,6 +34,7 @@ public class Run {
 					//System.out.println("\tLine:\t\t"+entry.getLine());
 					//System.out.println("\tContext:\t..."+entry.getContext()+"...");
 					System.out.println(entry.getLine()+":\t"+entry.getContext());
+					if(entry.getContext().toLowerCase().contains(key)) nActual++;
 					entry = (WordEntry) entry.next();
 				}
 				System.out.println();
@@ -41,7 +43,8 @@ public class Run {
 			
 			endFreeMem = Runtime.getRuntime().freeMemory();
 			System.out.println("INST: "+endInst+", SCAN: "+endScan+", ITER: "+endIter);
-			System.out.println("NENT: "+concordance.get("jesus").size()+", SMEM: "+startFreeMem+", EMEM: "+endFreeMem);
+			System.out.println("SMEM: "+startFreeMem+", EMEM: "+endFreeMem);
+			System.out.println("NENT: "+concordance.get(index[0]).size()+", NACTUAL: "+nActual);
 		} catch (IOException e) {
 			System.out.println("File loading error:");
 			e.printStackTrace();
