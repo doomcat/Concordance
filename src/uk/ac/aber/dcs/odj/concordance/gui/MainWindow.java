@@ -7,8 +7,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -54,6 +62,7 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 	
 	private DefaultListModel indexes;
 	private JList indexList;
+	private JList indexCountList;
 	
 	private JTextArea output;
 	
@@ -108,10 +117,17 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		content.add(topBar, BorderLayout.NORTH);
 		
 		indexes = new DefaultListModel();
-		JList indexList = new JList(indexes);
+		indexList = new JList(indexes);
 		indexList.addListSelectionListener(this);
+		indexCountList = new JList();
+		indexCountList.setEnabled(false);
 		
-		JScrollPane iPane1 = new JScrollPane(indexList);
+		JPanel listPane = new JPanel();
+		listPane.setLayout(new BorderLayout());
+		listPane.add(indexList, BorderLayout.CENTER);
+		listPane.add(indexCountList, BorderLayout.WEST);
+		
+		JScrollPane iPane1 = new JScrollPane(listPane);
 		JPanel pane1 = new JPanel();
 		
 		pane1.setLayout(new BorderLayout());
@@ -147,17 +163,21 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 	}
 	
 	private void printReferences(String key) {
-		if(concordance.containsKey(key)) {
-			output.setText("");
-			LittleLinkedList<WordEntry> list = (LittleLinkedList) concordance.get(key);
-			WordEntry e = (WordEntry) list.getHead();
-			while(e != null) {
-				String out = "Line "+e.getLine()+"\n----\n"+e.getContext()+"\n\n";
-				output.append(out);
-				e = (WordEntry) e.next();
+		try{
+			if(concordance.containsKey(key)) {
+				output.setText("");
+				LittleLinkedList<WordEntry> list = (LittleLinkedList) concordance.get(key);
+				WordEntry e = (WordEntry) list.getHead();
+				while(e != null) {
+					String out = "Line "+e.getLine()+"\n----\n"+e.getContext()+"\n\n";
+					output.append(out);
+					e = (WordEntry) e.next();
+				}
+			} else {
+				output.setText("The word '"+key+"' was not found in this document.");
 			}
-		} else {
-			output.setText("The word '"+key+"' was not found in this document.");
+		} catch(Exception e) {
+			output.setText("Concordance not loaded properly yet, try clicking 'Scan'");
 		}
 	}
 	
@@ -170,6 +190,7 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		try {
 			concordance = new Concordance(fDocument, (String[]) index);
 			concordance.scan();
+			printCounts();
 		} catch (IOException e) {
 			// TODO Implement error dialog
 			e.printStackTrace();
@@ -178,13 +199,65 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 
 	private String chooseFile(String oldVal) {
 		JFileChooser fc = new JFileChooser();
-		int status = fc.showOpenDialog(window);
-		if(status == JFileChooser.APPROVE_OPTION) {
-			return fc.getSelectedFile().getAbsolutePath();
+		try {
+			fc.setCurrentDirectory(new File(".").getCanonicalFile());
+			int status = fc.showOpenDialog(window);
+			if(status == JFileChooser.APPROVE_OPTION) {
+				return fc.getSelectedFile().getAbsolutePath();
+			}
+		} catch (IOException e) {
+			// TODO Add dialog
+			e.printStackTrace();
 		}
 		return oldVal;
 	}
 	
+	private void printCounts() {
+		indexCountList.setListData(new Object []{});
+		Vector<Integer> counts = new Vector<Integer>();
+		for(Object s : indexes.toArray()) {
+			if(concordance.containsKey(s)) {
+				counts.add(concordance.get(s).size());
+			} else {
+				counts.add(0);
+			}
+		}
+		indexCountList.setListData(counts);
+	}
+	
+	private void parseIndex(String file) {
+		ArrayList<String> words = new ArrayList<String>();
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(file));
+			String line;
+			Vector<Object> tmpCount = new Vector<Object>();
+			indexes.clear();
+			indexCountList.setListData(tmpCount);
+			while((line = in.readLine()) != null) {
+				if(concordance.isWord(line)) {
+					words.add(line.toLowerCase());
+					tmpCount.add(0);
+				}
+			}
+			Collections.sort(words);
+			for(String word : words) indexes.addElement(word);
+		} catch (Exception e) {
+			// TODO Add dialog
+			e.printStackTrace();
+		}
+	}
+	
+	private void addWord(String word) {
+		if(concordance.isWord(word)) {
+			indexes.addElement(word.toLowerCase());
+			Object[] words = indexes.toArray();
+			Arrays.sort(words);
+			indexes.clear();
+			for(Object w : words) indexes.addElement(w.toString());
+			printCounts();
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == bOpenFile) {
@@ -193,12 +266,10 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		} else if(e.getSource() == bOpenIndex) {
 			fIndex = chooseFile(fIndex);
 			lOpenIndex.setText(fIndex);
+			parseIndex(fIndex);
 		} else if(e.getSource() == bAddWord) {
-			String word = tAddWord.getText();
-			if(concordance.isWord(word)) {
-				indexes.addElement(word.toLowerCase());
-				tAddWord.setText(null);
-			}
+			addWord(tAddWord.getText());
+			tAddWord.setText(null);
 		} else if(e.getSource() == bScan) scan();
 	}
 

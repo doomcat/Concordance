@@ -7,9 +7,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
 
+/**
+ * A class based on Hashtable, which when supplied with a filename and an array
+ * of index words (as Strings), can generate a Concordance of the text - the
+ * number of times a word appears in the text is counted, along with its line
+ * numbers and contexts (the sentence/sentence fragment in which the 
+ * @author Owain Jones <odj@aber.ac.uk>
+ *
+ */
 public class Concordance extends Hashtable<String,LittleLinkedList>{
 	private String file;
 	private String[] index;
@@ -48,6 +58,12 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 			|| (c >= 'A' && c <= 'Z')
 			|| (c >= '0' && c <= '9'));
 	}
+
+	public static boolean isPunctuation(char c) {
+		return (c == '.' || c == ',' || c == '!' || c == '?' || c == ':'
+				|| c == ';' || c == '[' || c == ']' || c == '(' || c == ')'
+				|| c == '{' || c == '}');
+	}
 	
 	public static boolean isWord(String s) {
 		if(s.isEmpty()) return false;
@@ -75,21 +91,21 @@ public class Concordance extends Hashtable<String,LittleLinkedList>{
 				if(currentWord.length() != 0) {
 					currentWord.append(c);
 				}
-			} else if(c == ' ' || c == '\t') {
-				/*for(int i=0; i<=currentWord.length(); i++) {
+			} else if(c == ' ' || c == '\t' || isPunctuation(c)) {
+				for(int i=0; i<=currentWord.length(); i++) {
 					s = currentWord.substring(i).toLowerCase();
 					if(this.containsKey(s)) {
 						WordEntry entry = new WordEntry(line);
 						indexedWords.add(entry);
 						this.get(s).add(entry);
 					}
-				}*/
-				s = currentWord.toString().toLowerCase();
+				}
+				/*s = currentWord.toString().toLowerCase();
 				if(this.containsKey(s)) {
 					WordEntry entry = new WordEntry(line);
 					indexedWords.add(entry);
 					this.get(s).add(entry);
-				}
+				}*/
 				currentWord = new StringBuilder();
 			/*} else if(c == '\n') {
 				{
