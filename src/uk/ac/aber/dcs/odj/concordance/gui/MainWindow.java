@@ -42,6 +42,15 @@ import uk.ac.aber.dcs.odj.concordance.Concordance;
 import uk.ac.aber.dcs.odj.concordance.LittleLinkedList;
 import uk.ac.aber.dcs.odj.concordance.WordEntry;
 
+/**
+ * The GUI for using my {@link Concordance} class with.
+ * I kept all of the interface stuff inside one class, as the interface itself
+ * is pretty simple (apart from the utility functions converting from
+ * native java objects (String[] etc.) to the weird classes Swing occasionally
+ * uses).
+ * @author Owain Jones <odj@aber.ac.uk>
+ *
+ */
 public class MainWindow implements ActionListener, ListSelectionListener {
 	
 	//ALL INTERFACE ELEMENTS WHICH NEED TO BE ACCESSED ACROSS METHODS
@@ -191,6 +200,13 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		window.setVisible(true);
 	}
 	
+	/**
+	 * Given a key in {@link Concordance} (which is a {@link Hashtable} after
+	 * all), get all the {@link WordEntry} references from the
+	 * {@link LittleLinkedList} associated with that key, and print them out
+	 * to the text area on the right side of the interface.
+	 * @param key
+	 */
 	private void printReferences(String key) {
 		try{
 			if(concordance.containsKey(key)) {
@@ -210,6 +226,12 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		}
 	}
 	
+	/**
+	 * Converts interface's copy of word index into a String array, and then
+	 * creates a new {@link Concordance} using this index, runs
+	 * Concordance.scan() and then updates the UI to show the number of
+	 * references found for each index word (runs the printCounts() method).
+	 */
 	private void scan() {
 		Object[] tmpIndex = indexes.toArray();
 		String[] index = new String[tmpIndex.length];
@@ -226,6 +248,13 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		}
 	}
 
+	/**
+	 * file-choosing utility function. if an error occurs, will return
+	 * 'oldVal'.
+	 * @param oldVal the old/default value you want the return value to be,
+	 * should something go wrong (if error occurs, keep last filename)
+	 * @return absolute path to file in String form
+	 */
 	private String chooseFile(String oldVal) {
 		JFileChooser fc = new JFileChooser();
 		try {
@@ -241,6 +270,10 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		return oldVal;
 	}
 	
+	/**
+	 * gets all the word-counts for all the words in the concordance, in the
+	 * right order for the alphabetically-sorted list that the UI shows.
+	 */
 	private void printCounts() {
 		indexCountList.setListData(new Object []{});
 		Vector<Integer> counts = new Vector<Integer>();
@@ -254,6 +287,12 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		indexCountList.setListData(counts);
 	}
 	
+	/**
+	 * Loads a list of words from a file (one word per line), sets the
+	 * concordance's index to this array, and updates the UI to display the
+	 * words in the list on the left hand side.
+	 * @param file absolute path to a file.
+	 */
 	private void parseIndex(String file) {
 		ArrayList<String> words = new ArrayList<String>();
 		try {
@@ -276,6 +315,12 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		}
 	}
 	
+	/**
+	 * Adds a word to the concordance, and also updates the interface.
+	 * Checks whether the string you supplies actually is a word, and makes it
+	 * all lowercase.
+	 * @param word string to add, must be a single word
+	 */
 	private void addWord(String word) {
 		if(concordance.isWord(word)) {
 			indexes.addElement(word.toLowerCase());

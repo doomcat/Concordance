@@ -10,6 +10,12 @@ import uk.ac.aber.dcs.odj.concordance.CustomNode;
 import uk.ac.aber.dcs.odj.concordance.LittleLinkedList;
 import uk.ac.aber.dcs.odj.concordance.WordEntry;
 
+/**
+ * Tests my {@link LittleLinkedList} and {@link WordEntry} classes, to make sure
+ * they're working correctly, and also tests their performance.
+ * @author Owain Jones <odj@aber.ac.uk>
+ *
+ */
 public class TestWordReference {
 	final long NUM_ITERATIONS = 1000000; //how many times to run 'for' loops
 	private LittleLinkedList<WordEntry> list;

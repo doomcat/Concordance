@@ -1,17 +1,17 @@
 package uk.ac.aber.dcs.odj.concordance;
 
 /**
- * Minimal Linked List implementation that allows you to plug in your
+ * <p>Minimal Linked List implementation that allows you to plug in your
  * own custom Node objects, as long as the Nodes are based on my
- * {@link CustomNode} interface.
- * Behaves similarly to Java's default {@link LinkedList} class, but with less
- * methods.
- * Uses Generics, and elements in list must extend {@link CustomNode} class.
- * For my CS assignment, I only need to be able to add to the list and iterate
+ * {@link CustomNode} interface.</p>
+ * <p>Behaves similarly to Java's default {@link LinkedList} class, but with less
+ * methods.</p>
+ * <p>Uses Generics, and elements in list must extend {@link CustomNode} class.</p>
+ * <p>For my CS assignment, I only need to be able to add to the list and iterate
  * through all the elements in a serial manner - I don't need to be able to
  * remove or get specific elements in the middle of the list, so I've left
  * getAt, remove(index), add(index) etc. methods out of this implementation to
- * save myself time.
+ * save myself time.</p>
  * @author Owain Jones <odj@aber.ac.uk>
  *
  */
@@ -69,6 +69,10 @@ public class LittleLinkedList<T extends CustomNode> {
 		this.size = 0;
 	}
 
+	/**
+	 * 
+	 * @return current size of the list
+	 */
 	public int size() {
 		return this.size;
 	}

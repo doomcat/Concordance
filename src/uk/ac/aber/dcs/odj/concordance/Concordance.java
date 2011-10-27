@@ -149,6 +149,14 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 	 * {@code "That's not the most grandiose of natural language processing",
 	 * said Owain} - if we were looking for 'grandiose' or 'processing', their
 	 * contexts would both be the part within the speech marks.</p>
+	 * <p>scan() doesn't return anything, because the internal state of this
+	 * Concordance (a {@link Hashtable} after all) is altered by the method.
+	 * Once scan() has returned, you can access the elements as you would a
+	 * normal Hashtable.</p>
+	 * <p><b>Example:</b><br />
+	 * {@code Concordance.scan();
+	 * Concordance.get("word").size(); // get the number of references to this
+	 * word found after running a scan()}</p>
 	 * @throws IOException if something happens to the document file (e.g. it's
 	 * modified whilst we're reading it)
 	 */
@@ -161,16 +169,31 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 		LinkedList<WordEntry> indexedWords = new LinkedList<WordEntry>();
 		boolean append;
 
-		while((b = this.buffer.read()) != -1) {
+		while((b = this.buffer.read()) != -1) { //do until EOF reached
 			append = true;
-			c = (char) b;
+			c = (char) b; //cast buffer int to char
+			
+			//if character is alphanumeric, add to 'current word' list
 			if(isAlphaNumeric(c)) {
 				currentWord.append(c);
-			} else if(c == '-' || c == '\'') {
+			}
+			
+			/** if it's punctuation which could be inside a word (apostrophes
+			 * and hyphens), and the 'current word' isn't empty, add to 
+			 * 'current word' list. **/
+			else if(c == '-' || c == '\'') {
 				if(currentWord.length() != 0) {
 					currentWord.append(c);
 				}
-			} else if(c == ' ' || c == '\t' || isPunctuation(c)) {
+			}
+			/** if it's whitespace or punctuation, assume it's starting or ending
+			 * a word. loop through the 'current word' to see if any part of it
+			 * is a word in our index (so that words are found within their
+			 * plural versions, for example 'cat' found in 'cats').
+			 * If a word is found, create a WordEntry reference to it, and add
+			 * it to an 'indexed words' list (used later on), and also add it
+			 * to the concordance. **/
+			else if(c == ' ' || c == '\t' || isPunctuation(c)) {
 				for(int i=0; i<=currentWord.length(); i++) {
 					s = currentWord.substring(i).toLowerCase();
 					if(this.containsKey(s)) {
@@ -179,10 +202,19 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 						this.get(s).add(entry);
 					}
 				}
+				//since it's the end of a word, clear the 'current word' list.
 				currentWord = new StringBuilder();
-			} else if(c == '\n') line++; 
-			if(c == '.' || c == '!' || c == '?' || c == ':' || c == '{'
-				|| c == '}' || c == '(' || c == ')' || c == '[' || c == ']') {
+			}
+			
+			//if it's a line-terminating char, increment line number
+			else if(c == '\n') line++; 
+			
+			/** if it's a punctuation character, assume it's starting/ending a
+			 * sentence fragment. loop through the 'indexed words' list we've
+			 * been adding discovered words to, and set the current sentence
+			 * fragment as their context. then clear the current sentence
+			 * buffer, and the 'indexed words' list. **/
+			if(isPunctuation(c)) {
 				for(WordEntry w : indexedWords) {
 					w.setContext(currentSentence.toString());
 				}
@@ -190,6 +222,8 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 				append = false;
 				indexedWords.clear();
 			}
+			
+			//unless told otherwise, append char to 'current sentence' buffer.
 			if(append) currentSentence.append(c);
 		}
 	}

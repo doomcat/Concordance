@@ -12,6 +12,14 @@ import org.junit.Test;
 
 import uk.ac.aber.dcs.odj.concordance.Concordance;
 
+/**
+ * Creates a concordance, tests that it's initialized correctly, and then
+ * runs through three documents, each with a word which will definitely appear
+ * in that text. Asserts that the word count for the word we're looking at
+ * per-document is the same as that reported by `grep -i word -c file`.
+ * @author Owain Jones <odj@aber.ac.uk>
+ *
+ */
 public class TestConcordance {
 	private Concordance c;
 	private String[] index;

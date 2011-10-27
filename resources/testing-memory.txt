@@ -1,0 +1,39 @@
+1---------------------------------------------------------
+
+start:			23,548K
+scan:			25,540K
+biggest entry clicked:	38,956K
+
+1992K for concordance for king james bible, with words:
+bible -		3
+god -		4,185
+heaven -	566
+jesus -		926
+lucifer -	1
+mohammed -	0
+satan -		50
+templars -	0
+
+2----------------------------------------------------------
+
+start:			21,144K
+empty scan:		23,252K
+scan:			37,248K
+biggest entry clicked:	67,788K
+ALL OF THE THINGS click:95,244K
+
+37,248K-23,252K	= 13996K (13.6MB) with words:
+a		3277
+and		4744
+but		695
+how		189
+not		784
+of		3426
+or		2141
+that		1663
+the		7310
+this		797
+what		480
+when		471
+which		824
+who		475
