@@ -43,34 +43,34 @@ import uk.ac.aber.dcs.odj.concordance.LittleLinkedList;
 import uk.ac.aber.dcs.odj.concordance.WordEntry;
 
 public class MainWindow implements ActionListener, ListSelectionListener {
+	
+	//ALL INTERFACE ELEMENTS WHICH NEED TO BE ACCESSED ACROSS METHODS
 	private JFrame window;
 	private Container content;
 	private Concordance concordance;
-	
-	private String fDocument;
-	private String fIndex;
-	
+	private String fDocument;	//file path of document we want to read from
+	private String fIndex;		//file path of index we want to parse
 	private JButton bOpenFile;
 	private JButton bOpenIndex;
 	private JButton bScan;
 	private JButton bAddWord;
-	
 	private JLabel lOpenFile;
 	private JLabel lOpenIndex;
-	
 	private JTextField tAddWord;
-	
 	private DefaultListModel indexes;
 	private JList indexList;
 	private JList indexCountList;
-	
 	private JTextArea output;
 	
+	/**
+	 * Really simple main method which just creates MainWindow() object
+	 */
 	public static void main(String[] args) {
 		MainWindow mw = new MainWindow();
 	}
 	
 	public MainWindow() {
+		//Make swing look like it's a native program of the OS it's running on.
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
@@ -79,49 +79,68 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		
 		window = new JFrame("Concordance Generator");
 		window.setSize(768, 560);
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		content = window.getContentPane();
-		//content.setLayout(new GridBagLayout());
 		
+		/**
+		 * TOP PANEL (File loading/Scan buttons etc.) - uses GridBagLayout to
+		 * make it look nice. Reuses the one GridBagLayout object created below
+		 * throughout; if adding more elements to this part of the interface,
+		 * remember to reset any GridBagLayout properties that you don't want
+		 * your element to have.
+		 */
 		JPanel topBar = new JPanel();
 		topBar.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
 		
-		GridBagConstraints c = new GridBagConstraints();				
+		//Open document button
 		bOpenFile = new JButton("Open Document...");
 		bOpenFile.addActionListener(this);
 		c.gridx = 0; c.gridy = 0; c.anchor = c.BASELINE_LEADING; c.fill = c.VERTICAL;
 		c.ipadx = 2; c.ipady = 2;
 		topBar.add(bOpenFile, c);
 		
+		//Open index file button
 		bOpenIndex = new JButton("Open Index File...");
 		bOpenIndex.addActionListener(this);
 		c.gridx = 0; c.gridy = 1; c.anchor = c.BASELINE_LEADING; c.fill = c.VERTICAL;
 		topBar.add(bOpenIndex, c);
 		
+		//Label showing what document we currently have open
 		lOpenFile = new JLabel("No file specified");
 		c.gridx = 1; c.gridy = 0; c.anchor = c.CENTER; c.weightx = 1; c.fill = c.BOTH;
 		topBar.add(lOpenFile, c);
 		
+		//Label showing the path of the index file we have loaded
 		lOpenIndex = new JLabel("No file specified");
 		c.gridx = 1; c.gridy = 1; c.anchor = c.CENTER; c.weightx = 1; c.fill = c.BOTH;
 		topBar.add(lOpenIndex, c);
 
+		//Scan button
 		bScan = new JButton("Scan");
 		bScan.addActionListener(this);
 		c.gridx = 2; c.gridy = 0; c.gridheight = 2; c.weightx = 0;
 		topBar.add(bScan, c);
 		
+		//Separator element
 		JSeparator separator = new JSeparator();
 		c.gridx = 0; c.gridy = 2; c.gridheight = 1; c.gridwidth = 3; c.weightx = 1;
 		topBar.add(separator, c);
 
 		content.add(topBar, BorderLayout.NORTH);
 		
-		indexes = new DefaultListModel();
-		indexList = new JList(indexes);
-		indexList.addListSelectionListener(this);
-		indexCountList = new JList();
-		indexCountList.setEnabled(false);
+		/**
+		 * SPLIT PANE, Left side: list of index words, plus widgets to allow
+		 * adding more words to the index.
+		 */
 		
+		indexes = new DefaultListModel(); //Holds the actual list data
+		indexList = new JList(indexes);
+		indexList.addListSelectionListener(this); //See valueChanged() below
+		indexCountList = new JList(); //The count for every index word, on left
+		indexCountList.setEnabled(false); //Not selectable, so disable
+		
+		// INDEX WORDS/INDEX WORDS COUNT LISTS, contained in a scrollable pane
 		JPanel listPane = new JPanel();
 		listPane.setLayout(new BorderLayout());
 		listPane.add(indexList, BorderLayout.CENTER);
@@ -133,6 +152,7 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		pane1.setLayout(new BorderLayout());
 		pane1.add(iPane1, BorderLayout.CENTER);
 		
+		// WIDGETS (Text Area + Button) FOR ADDING WORDS TO THE INDEX
 		JPanel ipane2 = new JPanel();
 		ipane2.setLayout(new BorderLayout());
 		
@@ -145,13 +165,22 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		
 		pane1.add(ipane2, BorderLayout.PAGE_END);
 		
+		/**
+		 * SPLIT PANE, Right side: Scrollable text area. When a word is clicked
+		 * in the list on the left side of the split, the results of the
+		 * concordance for that word are printed to this text area.
+		 */
 		output = new JTextArea();
 		output.setEditable(false);
 		output.setWrapStyleWord(true);
 		output.setLineWrap(true);
-		
 		JScrollPane pane2 = new JScrollPane(output);
 		
+		/**
+		 * ADD THE TWO CONTAINER PANELS TO THE SPLIT PANE, then add everything
+		 * to the main window using BorderLayout.CENTER so it uses up all the
+		 * free space. 
+		 */
 		JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,
 				pane1, pane2);
 		split.setOneTouchExpandable(true); split.setDividerLocation(120);
@@ -258,6 +287,13 @@ public class MainWindow implements ActionListener, ListSelectionListener {
 		}
 	}
 
+	/**
+	 * Handle all the button presses in the application.<br />
+	 * 'open file' button -> fDocument = chooseFile();<br />
+	 * 'open index' button -> fIndex = chooseFile();<br />
+	 * '+' button -> addWord();<br />
+	 * 'scan' button -> scan(); 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource() == bOpenFile) {

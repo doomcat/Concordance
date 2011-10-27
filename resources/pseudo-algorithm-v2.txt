@@ -1,0 +1,43 @@
+line number = 0
+while (there are characters left in file) {
+	if(character is alpha-numeric)
+	{
+		append to 'current word' object
+	}
+	else if(character is apostrophe (') or hyphen (-)
+	{
+		if('current word' is not empty)
+		{
+			append to 'current word' object
+		}
+	}
+	else if(character is punctuation (commas, full stops,
+		[semi]colons, brackets, ...)
+	{
+		for each(character in 'current word')
+		{
+			s = character in lower-case
+			if(concordance contains key s)
+			{
+				create new WordEntry object, w
+				add w to 'indexed words' list
+				also add w to hashtable, as key
+			}
+		}
+		clear/empty 'current word' object
+	}
+	else if(character is line-terminating character (\n))
+	{
+		increment line number
+	}
+	if(c is punctuation)
+	{
+		for each(each word in 'indexed words' list)
+		{
+			set word context to 'current sentence'
+		}
+		clear/empty 'current sentence' object
+		clear/empty 'indexed words' list
+	}
+	append character to 'current sentence' list
+}

@@ -82,7 +82,7 @@ public class TestWordReference {
 	 * test that nothing strange is going on in the LittleLinkedList/WordEntry
 	 * implementation when adding lots of elements.
 	 */
-	//@Test
+	@Test
 	public void testPerformance() {
 		for(int i=0; i<NUM_ITERATIONS; i++) {
 			list.add(new WordEntry(i,"line #"+i));
