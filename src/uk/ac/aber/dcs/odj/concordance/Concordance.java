@@ -47,8 +47,7 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 	 */
 	public Concordance(String file, String[] index) throws IOException {
 		super();
-		this.index = index;
-		this.generateIndex();
+		this.generateIndex(index);
 		this.setFile(file);
 	}
 
@@ -64,21 +63,15 @@ public class Concordance extends Hashtable<String,LittleLinkedList<WordEntry>>{
 		this.buffer = new BufferedReader(reader);
 		this.file = file;
 	}
-	
-	/**
-	 * Set the list of words to scan for (Concordance words index)
-	 * @param index String array of words
-	 */
-	public void setIndex(String[] index) {
-		this.index = index;
-	}
-	
+
 	/**
 	 * For every word in the index, create a respective key in the Concordance's
 	 * underlying {@link Hashtable}. This key is associated with an empty
 	 * {@link LittleLinkedList}. (The LittleLinkedList is the key's value)
 	 */
-	public void generateIndex() {
+	public void generateIndex(String[] index) {
+		this.clear();
+		this.index = index;
 		for(String s : this.index) {
 			this.put(s.toLowerCase(), new LittleLinkedList<WordEntry>());
 		}

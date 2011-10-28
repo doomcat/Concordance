@@ -33,8 +33,7 @@ public class TestConcordance {
 	
 	@Test
 	public void testInit() {
-		c.setIndex(index);
-		c.generateIndex();
+		c.generateIndex(index);
 		Assert.assertEquals(3, c.size());
 		for(String s : index) {
 			Assert.assertTrue(c.containsKey(s));
@@ -71,8 +70,7 @@ public class TestConcordance {
 	@Test
 	public void testCommonWords() throws IOException {
 		String[] commons = new String[]{"and","or","the","that","is"};
-		c.setIndex(commons);
-		c.generateIndex();
+		c.generateIndex(commons);
 		String file = new File("./resources/shakespeare.txt").getCanonicalPath();
 		c.setFile(file);
 		c.scan();
