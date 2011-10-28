@@ -84,7 +84,7 @@ public class TestWordReference {
 	}
 	
 	/**
-	 * Make sure we can add to a linkedlist in a reasonable (e.g. O(n)) time -
+	 * Make sure we can add to a linkedlist in a reasonable (e.g. O(n)?) time -
 	 * test that nothing strange is going on in the LittleLinkedList/WordEntry
 	 * implementation when adding lots of elements.
 	 */
