@@ -1,0 +1,1 @@
+java -cp ./bin uk.ac.aber.dcs.odj.concordance.gui.MainWindow
